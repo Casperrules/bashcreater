@@ -1,0 +1,36 @@
+#
+# Cookbook:: bashcreater
+# Recipe:: default
+#
+# Copyright:: 2021, The Authors, All Rights Reserved.
+
+directory '/etc/chef-demo' do
+  action :create
+end
+
+directory '/etc/chef-demo/out' do
+  action :create
+end
+
+file '/etc/chef-demo/out/users' do
+  content ''
+  action :create
+end
+
+file '/etc/chef-demo/out/groups' do
+  content ''
+  action :create
+end
+
+# take username and group names from an external json file provided while running chef-client
+template '#{node['bashcreater']['script_dir']}/test_bash.sh' do
+  source 'adder.sh.erb'
+  owner 'root'
+  group 'root'
+  mode '777'
+  variables(
+	:group_name => node['my_attributes']['user_name'],
+	:user_name => node['my_attributes']['group_name']
+        )
+  action :create
+end
